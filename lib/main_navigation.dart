@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rubisch/themes/colors.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class MainNavigation extends StatelessWidget {
   const MainNavigation({super.key});
@@ -10,12 +11,12 @@ class MainNavigation extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        tooltip: 'Increment',
+        tooltip: 'Scan Trash',
         elevation: 2.0,
-        child: Icon(Icons.add),
+        backgroundColor: AppColors.primary,
+        child: Icon(MdiIcons.lineScan, size: 30, color: AppColors.light),
       ),
       bottomNavigationBar: BottomAppBar(
-        // notchedShape: CircularNotchedRectangle(),
         color: AppColors.neutral,
         child: Row(
           mainAxisSize: MainAxisSize.max,

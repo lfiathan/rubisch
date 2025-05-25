@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rubisch/pages/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -163,7 +164,7 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   List<Widget> get _pages => [
-    SafeArea(child: Scaffold(body: Center(child: Text("Halaman 1")))),
+    HomePage(),
     SafeArea(child: Scaffold(body: Center(child: Text("Halaman 2")))),
   ];
 

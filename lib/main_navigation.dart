@@ -88,11 +88,11 @@ class _MainNavigationState extends State<MainNavigation> {
       // Convert to input tensor format
       final input = _imageToByteListFloat32(resizedImage, 224);
 
-      // Prepare output tensor
-      final output = List.filled(
-        1 * _labels!.length,
-        0.0,
-      ).reshape([1, _labels!.length]);
+      // Prepare output tensor as 2D list [batch_size, num_classes]
+      final output = List.generate(
+        1,
+        (i) => List<double>.filled(_labels!.length, 0.0),
+      );
 
       // Run inference
       _interpreter!.run(input, output);
@@ -118,23 +118,31 @@ class _MainNavigationState extends State<MainNavigation> {
     }
   }
 
-  Float32List _imageToByteListFloat32(img.Image image, int inputSize) {
-    var convertedBytes = Float32List(1 * inputSize * inputSize * 3);
-    var buffer = Float32List.view(convertedBytes.buffer);
-    int pixelIndex = 0;
+  List<List<List<List<double>>>> _imageToByteListFloat32(
+    img.Image image,
+    int inputSize,
+  ) {
+    // Create a 4D list: [batch_size, height, width, channels]
+    var input = List.generate(
+      1,
+      (batch) => List.generate(
+        inputSize,
+        (y) => List.generate(inputSize, (x) => List<double>.filled(3, 0.0)),
+      ),
+    );
 
-    for (int i = 0; i < inputSize; i++) {
-      for (int j = 0; j < inputSize; j++) {
-        var pixel = image.getPixel(j, i); // Pixel object in image 4.0.0+
+    for (int y = 0; y < inputSize; y++) {
+      for (int x = 0; x < inputSize; x++) {
+        var pixel = image.getPixel(x, y);
 
-        // Normalize pixel values to [-1, 1]
-        buffer[pixelIndex++] = (pixel.r - 127.5) / 127.5;
-        buffer[pixelIndex++] = (pixel.g - 127.5) / 127.5;
-        buffer[pixelIndex++] = (pixel.b - 127.5) / 127.5;
+        // Normalize pixel values to [-1, 1] (adjust based on your model's requirements)
+        input[0][y][x][0] = (pixel.r - 127.5) / 127.5;
+        input[0][y][x][1] = (pixel.g - 127.5) / 127.5;
+        input[0][y][x][2] = (pixel.b - 127.5) / 127.5;
       }
     }
 
-    return convertedBytes;
+    return input;
   }
 
   Map<String, dynamic> _getPrediction(List<double> output) {

@@ -1,9 +1,14 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';git
+
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:tflite_v2/tflite_v2.dart';
+import 'package:rubisch/result_screen.dart'; // Import the new screen
 
 class MainNavigation extends StatefulWidget {
+
   const MainNavigation({super.key});
 
   @override
@@ -16,6 +21,52 @@ class _MainNavigationState extends State<MainNavigation> {
   void _onItemTapped(int index) {
     setState(() => _selectedIndex = index);
   }
+  
+  @override
+  void dispose() {
+    Tflite.close();
+    super.dispose();
+  }
+
+  Future<void> _scanGarbage() async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+      if (pickedFile == null) {
+        return; // User cancelled the picker
+      }
+
+      await Tflite.loadModel(
+        model: "assets/garbage_classifier_model.tflite",
+        labels: "assets/labels.txt", // Assuming you have a labels.txt file
+        numThreads: 1,
+        isAsset: true,
+        useGpuDelegate: false,
+      );
+
+      final recognitions = await Tflite.runModelOnImage(
+        path: pickedFile.path,
+        numResults: 1, // Get the top result
+        threshold: 0.5, // Confidence threshold
+        imageMean: 127.5,
+        imageStd: 127.5,
+      );
+
+      // Tflite.close(); // Moved to dispose
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ResultScreen(classificationResult: recognitions?.isNotEmpty == true ? recognitions!.first['label'] : 'Unknown'),
+        ),
+      );
+    } catch (e) {
+      print("Error scanning garbage: $e");
+      // Optionally show an error message to the user
+    }
+  }
+
 
   List<Widget> get _pages => [
     SafeArea(child: Scaffold(body: Center(child: Text("Halaman 1")))),
@@ -109,7 +160,7 @@ class _MainNavigationState extends State<MainNavigation> {
           borderRadius: BorderRadius.circular(16.r),
         ),
         child: FloatingActionButton(
-          onPressed: () {},
+          onPressed: _scanGarbage,
           tooltip: 'Scan Trash',
           elevation: 2.0,
           backgroundColor: AppColors.primary,

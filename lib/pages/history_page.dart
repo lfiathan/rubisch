@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/model/scan_history.dart';
 import 'package:rubisch/service/history_service.dart';
 import 'package:rubisch/themes/colors.dart';
-import 'dart:io';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});

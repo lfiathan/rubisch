@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/service/history_service.dart';
 import 'package:rubisch/themes/colors.dart';
-import 'package:rubisch/model/scan_history.dart';
 import 'dart:io';
 
 class ResultScreen extends StatefulWidget {

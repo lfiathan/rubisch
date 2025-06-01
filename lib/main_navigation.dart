@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rubisch/pages/history_page.dart';
 import 'package:rubisch/pages/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rubisch/themes/colors.dart';
@@ -7,7 +8,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:rubisch/result_screen.dart';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 
 class MainNavigation extends StatefulWidget {
@@ -100,14 +100,17 @@ class _MainNavigationState extends State<MainNavigation> {
 
       // Get prediction
       final prediction = _getPrediction(output[0]);
+      
+      // Debug: print prediction result
+      print('ML Prediction: ${prediction['label']} with confidence: ${prediction['confidence']}');
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder:
-              (context) => ResultScreen(
-                classificationResult: prediction['label'] ?? 'Unknown',
-              ),
+          builder: (context) => ResultScreen(
+            classificationResult: prediction['label'] ?? 'Unknown',
+            imagePath: pickedFile.path, // Pass the image path
+          ),
         ),
       );
     } catch (e) {
@@ -165,7 +168,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   List<Widget> get _pages => [
     HomePage(),
-    SafeArea(child: Scaffold(body: Center(child: Text("Halaman 2")))),
+    HistoryPage()
   ];
 
   @override
@@ -269,4 +272,3 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
-

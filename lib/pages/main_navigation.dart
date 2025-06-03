@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:rubisch/pages/history_page.dart';
-import 'package:rubisch/pages/home_page.dart';
+import 'package:rubisch/pages/navbar_pages/history_page.dart';
+import 'package:rubisch/pages/navbar_pages/home_page.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'package:rubisch/utils/coin_manager.dart';
 import 'package:rubisch/service/ml_model_service.dart';

@@ -9,7 +9,7 @@ import 'package:rubisch/data/models/article_response.dart';
 import 'package:rubisch/pages/pushed_pages/detail_article_page.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'package:rubisch/components/item_information.dart';
-import 'package:rubisch/pages/item_detail_page.dart';
+import 'package:rubisch/pages/pushed_pages/detail_item_page.dart';
 import 'package:rubisch/utils/coin_manager.dart';
 import 'package:rubisch/data/waste_data.dart'; // Import data pusat
 

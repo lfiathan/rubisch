@@ -7,7 +7,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:rubisch/result_screen.dart';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:image/image.dart' as img;
 
 class MainNavigation extends StatefulWidget {
@@ -269,4 +268,3 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
-

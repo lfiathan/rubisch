@@ -46,6 +46,77 @@ class _HistoryPageState extends State<HistoryPage> {
     }
   }
 
+  Future<void> _updateHistory(ScanHistory updatedHistory) async {
+    try {
+      // Update in database/service
+      await HistoryService.updateHistory(updatedHistory);
+      
+      // Update in local list
+      setState(() {
+        int index = _historyList.indexWhere((history) => history.id == updatedHistory.id);
+        if (index != -1) {
+          _historyList[index] = updatedHistory;
+        }
+      });
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('History updated successfully'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error updating history: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update history'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _deleteHistory(String historyId) async {
+    try {
+      // Delete from database/service
+      await HistoryService.deleteHistory(historyId);
+      
+      // Remove from local list
+      setState(() {
+        _historyList.removeWhere((history) => history.id == historyId);
+      });
+
+      // Show success message
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('History deleted successfully'),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error deleting history: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to delete history'),
+            backgroundColor: Colors.red,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,7 +156,11 @@ class _HistoryPageState extends State<HistoryPage> {
                       itemCount: _historyList.length,
                       itemBuilder: (context, index) {
                         final history = _historyList[index];
-                        return HistoryCard(history: history);
+                        return HistoryCard(
+                          history: history,
+                          onUpdate: _updateHistory,
+                          onDelete: _deleteHistory,
+                        );
                       },
                     ),
                   ),

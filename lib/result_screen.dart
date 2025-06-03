@@ -1,18 +1,23 @@
+// lib/result_screen.dart (modifikasi)
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/service/history_service.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'dart:io';
+import 'package:rubisch/utils/coin_manager.dart';
+import 'package:rubisch/data/waste_data.dart'; // Import data pusat
 
 class ResultScreen extends StatefulWidget {
   final String classificationResult;
   final String? imagePath;
+  final CoinManager coinManager;
 
   const ResultScreen({
-    Key? key,
+    super.key,
     required this.classificationResult,
     this.imagePath,
-  }) : super(key: key);
+    required this.coinManager,
+  });
 
   @override
   State<ResultScreen> createState() => _ResultScreenState();
@@ -22,154 +27,19 @@ class _ResultScreenState extends State<ResultScreen> {
   final TextEditingController _rubbishNameController = TextEditingController();
   bool _isSaving = false;
 
-  // Data item dengan berbagai kemungkinan nama dari model ML
-  static const Map<String, Map<String, dynamic>> _itemsData = {
-    // Plastic variants
-    'plastic': {
-      'icon': Icons.local_drink,
-      'description':
-          'Botol plastik adalah salah satu jenis sampah yang paling umum ditemukan dan dapat didaur ulang dengan efektif.',
-      'price': 800,
-    },
-    'Plastic': {
-      'icon': Icons.local_drink,
-      'description':
-          'Botol plastik adalah salah satu jenis sampah yang paling umum ditemukan dan dapat didaur ulang dengan efektif.',
-      'price': 800,
-    },
+  // Buat Map dari kWasteCategories untuk pencarian yang efisien berdasarkan title (huruf kecil)
+  // Ini akan dibuat sekali saat state diinisialisasi
+  late final Map<String, WasteCategory> _wasteCategoriesMap;
 
-    // Battery variants
-    'battery': {
-      'icon': Icons.battery_charging_full,
-      'description':
-          'Baterai bekas mengandung bahan kimia berbahaya yang harus didaur ulang dengan benar.',
-      'price': 1200,
-    },
-    'Battery': {
-      'icon': Icons.battery_charging_full,
-      'description':
-          'Baterai bekas mengandung bahan kimia berbahaya yang harus didaur ulang dengan benar.',
-      'price': 1200,
-    },
-
-    // Cardboard variants
-    'cardboard': {
-      'icon': Icons.description,
-      'description':
-          'Kardus adalah material kemasan yang sangat mudah didaur ulang.',
-      'price': 300,
-    },
-    'Cardboard': {
-      'icon': Icons.description,
-      'description':
-          'Kardus adalah material kemasan yang sangat mudah didaur ulang.',
-      'price': 300,
-    },
-
-    // Clothes variants
-    'clothes': {
-      'icon': Icons.checkroom,
-      'description':
-          'Pakaian bekas dapat didaur ulang menjadi serat tekstil baru atau produk lainnya.',
-      'price': 600,
-    },
-    'Clothes': {
-      'icon': Icons.checkroom,
-      'description':
-          'Pakaian bekas dapat didaur ulang menjadi serat tekstil baru atau produk lainnya.',
-      'price': 600,
-    },
-
-    // Paper variants
-    'paper': {
-      'icon': Icons.receipt,
-      'description':
-          'Kertas adalah salah satu material yang paling mudah didaur ulang.',
-      'price': 400,
-    },
-    'Paper': {
-      'icon': Icons.receipt,
-      'description':
-          'Kertas adalah salah satu material yang paling mudah didaur ulang.',
-      'price': 400,
-    },
-
-    // Shoes variants
-    'shoes': {
-      'icon': Icons.ice_skating,
-      'description':
-          'Sepatu bekas dapat didaur ulang dengan memisahkan berbagai komponennya.',
-      'price': 500,
-    },
-    'Shoes': {
-      'icon': Icons.ice_skating,
-      'description':
-          'Sepatu bekas dapat didaur ulang dengan memisahkan berbagai komponennya.',
-      'price': 500,
-    },
-
-    // Glass variants
-    'glass': {
-      'icon': Icons.local_bar,
-      'description':
-          'Botol kaca dapat didaur ulang tanpa batas tanpa kehilangan kualitas.',
-      'price': 250,
-    },
-    'Glass': {
-      'icon': Icons.local_bar,
-      'description':
-          'Botol kaca dapat didaur ulang tanpa batas tanpa kehilangan kualitas.',
-      'price': 250,
-    },
-
-    // Metal variants
-    'metal': {
-      'icon': Icons.iron,
-      'description':
-          'Logam dapat didaur ulang berkali-kali tanpa kehilangan kualitas.',
-      'price': 1500,
-    },
-    'Metal': {
-      'icon': Icons.iron,
-      'description':
-          'Logam dapat didaur ulang berkali-kali tanpa kehilangan kualitas.',
-      'price': 1500,
-    },
-
-    // Biological variants
-    'biological': {
-      'icon': Icons.local_pizza,
-      'description':
-          'Sampah organik dapat diolah menjadi kompos yang berguna untuk tanaman.',
-      'price': 100,
-    },
-    'Biological': {
-      'icon': Icons.local_pizza,
-      'description':
-          'Sampah organik dapat diolah menjadi kompos yang berguna untuk tanaman.',
-      'price': 100,
-    },
-    'organic': {
-      'icon': Icons.local_pizza,
-      'description':
-          'Sampah organik dapat diolah menjadi kompos yang berguna untuk tanaman.',
-      'price': 100,
-    },
-
-    // Trash variants
-    'trash': {
-      'icon': Icons.masks,
-      'description':
-          'Sampah umum yang tidak dapat didaur ulang perlu dikelola dengan baik.',
-      'price': 150,
-    },
-    'Trash': {
-      'icon': Icons.masks,
-      'description':
-          'Sampah umum yang tidak dapat didaur ulang perlu dikelola dengan baik.',
-      'price': 150,
-    },
-  };
+  @override
+  void initState() {
+    super.initState();
+    // Inisialisasi map saat initState
+    _wasteCategoriesMap = {
+      for (var category in kWasteCategories)
+        category.title.toLowerCase(): category
+    };
+  }
 
   @override
   void dispose() {
@@ -178,11 +48,10 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Future<void> _sellItem() async {
-    // Validate if rubbish name is entered
     if (_rubbishNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please enter the rubbish name first'),
+          content: Text('Mohon masukkan nama sampah terlebih dahulu'),
           backgroundColor: Colors.red,
         ),
       );
@@ -192,7 +61,7 @@ class _ResultScreenState extends State<ResultScreen> {
     if (widget.imagePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('No image to save'),
+          content: Text('Tidak ada gambar untuk disimpan'),
           backgroundColor: Colors.red,
         ),
       );
@@ -205,38 +74,38 @@ class _ResultScreenState extends State<ResultScreen> {
 
     try {
       final rubbishName = _rubbishNameController.text.trim();
-      final itemData = _getItemData();
-      
-      // Create and save history
+      final WasteCategory selectedCategory = _getWasteCategory(); // Gunakan objek WasteCategory
+      final int price = selectedCategory.price;
+
       final history = await HistoryService.createHistoryFromScan(
         tempImagePath: widget.imagePath!,
-        classificationResult: widget.classificationResult,
+        classificationResult: widget.classificationResult, // Tetap gunakan hasil asli untuk riwayat
         rubbishName: rubbishName,
-        price: itemData['price'],
+        price: price,
       );
-      
+
       await HistoryService.saveHistory(history);
 
-      // Show success message
+      widget.coinManager.addCoins(price.toDouble()); // Pastikan ini double jika CoinManager mengharapkan double
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Successfully sold "$rubbishName" for ${itemData['price']} btc',
+              'Berhasil menjual "$rubbishName" seharga ${price} btc. Saldo baru: ${widget.coinManager.currentCoins.value.toInt()} btc',
             ),
             backgroundColor: AppColors.primary,
           ),
         );
 
-        // Navigate back to home
         Navigator.popUntil(context, (route) => route.isFirst);
       }
     } catch (e) {
-      print('Error saving item: $e');
+      print('Error menyimpan item: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving item: $e'),
+            content: Text('Error menyimpan item: $e'),
             backgroundColor: Colors.red,
           ),
         );
@@ -250,43 +119,36 @@ class _ResultScreenState extends State<ResultScreen> {
     }
   }
 
-  Map<String, dynamic> _getItemData() {
-    // Debug: print the classification result
+  // Mengubah _getItemData menjadi _getWasteCategory
+  WasteCategory _getWasteCategory() {
     print('Classification Result: "${widget.classificationResult}"');
 
-    // Try to find the item data with case-insensitive matching
-    Map<String, dynamic>? itemData;
+    final normalizedClassification = widget.classificationResult.toLowerCase();
 
-    // First try exact match
-    itemData = _itemsData[widget.classificationResult];
+    // Coba pencocokan tepat menggunakan map
+    WasteCategory? category = _wasteCategoriesMap[normalizedClassification];
 
-    // If not found, try lowercase match
-    if (itemData == null) {
-      itemData = _itemsData[widget.classificationResult.toLowerCase()];
-    }
-
-    // If still not found, try to find partial match
-    if (itemData == null) {
-      final lowerResult = widget.classificationResult.toLowerCase();
-      for (String key in _itemsData.keys) {
-        if (key.toLowerCase().contains(lowerResult) ||
-            lowerResult.contains(key.toLowerCase())) {
-          itemData = _itemsData[key];
+    // Fallback untuk pencocokan parsial jika klasifikasi tidak tepat sama dengan kunci map
+    // Ini mungkin tidak diperlukan jika ML selalu menghasilkan nama yang cocok dengan salah satu kategori
+    if (category == null) {
+      for (var entry in _wasteCategoriesMap.entries) {
+        if (normalizedClassification.contains(entry.key) || entry.key.contains(normalizedClassification)) {
+          category = entry.value;
           break;
         }
       }
     }
 
-    // Default to trash if nothing found
-    itemData ??= _itemsData['trash']!;
+    // Default ke 'Trash' jika tidak ada yang cocok
+    category ??= _wasteCategoriesMap['trash']!; // Pastikan 'trash' selalu ada di map Anda
 
-    print('Using item data for: ${itemData['price']} btc');
-    return itemData;
+    print('Menggunakan kategori: ${category.title} dengan harga ${category.price} btc');
+    return category;
   }
 
   @override
   Widget build(BuildContext context) {
-    final itemData = _getItemData();
+    final WasteCategory currentCategory = _getWasteCategory();
 
     return Scaffold(
       backgroundColor: AppColors.light,
@@ -310,7 +172,6 @@ class _ResultScreenState extends State<ResultScreen> {
       ),
       body: Column(
         children: [
-          // Main content - Expanded to take remaining space
           Expanded(
             child: SingleChildScrollView(
               child: Padding(
@@ -320,7 +181,6 @@ class _ResultScreenState extends State<ResultScreen> {
                   children: [
                     SizedBox(height: 24.h),
 
-                    // Image Container
                     Center(
                       child: Container(
                         width: 200.w,
@@ -346,7 +206,7 @@ class _ResultScreenState extends State<ResultScreen> {
                               : Container(
                                   color: Colors.grey[300],
                                   child: Icon(
-                                    itemData['icon'],
+                                    currentCategory.icon, // Akses icon dari objek
                                     size: 80.sp,
                                     color: AppColors.primary,
                                   ),
@@ -357,7 +217,6 @@ class _ResultScreenState extends State<ResultScreen> {
 
                     SizedBox(height: 32.h),
 
-                    // Rubbish Name Input
                     Row(
                       children: [
                         Icon(Icons.delete, color: AppColors.primary, size: 24.sp),
@@ -366,7 +225,7 @@ class _ResultScreenState extends State<ResultScreen> {
                           child: TextField(
                             controller: _rubbishNameController,
                             decoration: InputDecoration(
-                              hintText: 'Enter your rubbish name here...',
+                              hintText: 'Masukkan nama sampah Anda di sini...',
                               hintStyle: TextStyle(
                                 color: AppColors.dark.withOpacity(0.5),
                                 fontSize: 16.sp,
@@ -386,13 +245,12 @@ class _ResultScreenState extends State<ResultScreen> {
 
                     SizedBox(height: 16.h),
 
-                    // Category
                     Row(
                       children: [
                         Icon(Icons.apps, color: AppColors.primary, size: 24.sp),
                         SizedBox(width: 12.w),
                         Text(
-                          'Category : ',
+                          'Kategori : ',
                           style: TextStyle(
                             color: AppColors.dark,
                             fontSize: 16.sp,
@@ -412,13 +270,12 @@ class _ResultScreenState extends State<ResultScreen> {
 
                     SizedBox(height: 16.h),
 
-                    // Price
                     Row(
                       children: [
                         Icon(Icons.paid, color: AppColors.primary, size: 24.sp),
                         SizedBox(width: 12.w),
                         Text(
-                          '${itemData['price']} btc',
+                          '${currentCategory.price} btc', // Akses price dari objek
                           style: TextStyle(
                             color: AppColors.primary,
                             fontSize: 18.sp,
@@ -428,7 +285,6 @@ class _ResultScreenState extends State<ResultScreen> {
                       ],
                     ),
 
-                    // Add some bottom padding to ensure content doesn't get hidden behind buttons
                     SizedBox(height: 100.h),
                   ],
                 ),
@@ -436,7 +292,6 @@ class _ResultScreenState extends State<ResultScreen> {
             ),
           ),
 
-          // Bottom Buttons - Fixed at bottom
           Container(
             color: AppColors.light,
             padding: EdgeInsets.fromLTRB(24.w, 16.h, 24.w, 32.h),

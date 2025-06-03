@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:rubisch/components/article_card.dart';
 import 'package:rubisch/components/carousel.dart';
 import 'package:rubisch/components/coin_information.dart';
@@ -8,25 +7,31 @@ import 'package:rubisch/data/api/article_api.dart';
 import 'package:rubisch/data/models/article_response.dart';
 import 'package:rubisch/themes/colors.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final Future<ArticleResponse> article = ArticleApi().topHeadlines();
+  State<HomePage> createState() => _HomePageState();
+}
 
+class _HomePageState extends State<HomePage> {
+  final Future<ArticleResponse> article = ArticleApi().topHeadlines();
+  int shownArticleCount = 10;
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: SingleChildScrollView(
           child: Column(
+            spacing: 28.h,
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 32.h,
             children: [
               SizedBox(),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: 8.h,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Hello User !",
@@ -40,7 +45,6 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
-
               Column(
                 spacing: 16.h,
                 children: [
@@ -54,16 +58,14 @@ class HomePage extends StatelessWidget {
                   CoinInformation(coin: "1200"),
                 ],
               ),
-
               Column(
-                spacing: 16.h,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 12.h,
                 children: [
                   Row(
                     spacing: 8.w,
                     children: [
                       Icon(
-                        MdiIcons.newspaper,
+                        Icons.article,
                         size: 28.sp,
                         color: AppColors.primary,
                       ),
@@ -81,20 +83,68 @@ class HomePage extends StatelessWidget {
                       if (snapshot.connectionState != ConnectionState.done) {
                         return Center(child: CircularProgressIndicator());
                       } else if (snapshot.hasData) {
-                        final articles = snapshot.data!.articles;
-                        return ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: articles.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: ArticleCard(
-                                article: articles[index],
-                                onTap: () => {print("BISA COYY")},
+                        final allArticles = snapshot.data!.articles;
+                        final maxToShow = shownArticleCount.clamp(
+                          0,
+                          allArticles.length,
+                        );
+                        final articlesToShow =
+                            allArticles.take(maxToShow).toList();
+
+                        return Column(
+                          children: [
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: articlesToShow.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 12.h),
+                                  child: ArticleCard(
+                                    article: articlesToShow[index],
+                                    onTap: () => {},
+                                  ),
+                                );
+                              },
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  shownArticleCount += 10;
+                                });
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: AppColors.accent,
+                                minimumSize: Size(double.infinity, 40.h),
+                                padding: EdgeInsets.symmetric(vertical: 12.h),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.r),
+                                  side: BorderSide(color: AppColors.primary),
+                                ),
                               ),
-                            );
-                          },
+                              child: Row(
+                                spacing: 4.h,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.keyboard_arrow_down,
+                                    color: AppColors.primary,
+                                    size: 28.sp,
+                                  ),
+                                  Text(
+                                    "Show More",
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.titleSmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         );
                       } else if (snapshot.hasError) {
                         return Center(child: Text(snapshot.error.toString()));
@@ -105,6 +155,7 @@ class HomePage extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(),
             ],
           ),
         ),

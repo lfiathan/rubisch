@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart'; // <- tambahkan ini
 import 'package:rubisch/main_navigation.dart';
 import 'service/history_service.dart'; // Updated import
 import 'package:hive_flutter/hive_flutter.dart'; // Import Hive
@@ -17,6 +18,7 @@ void main() async {
   await CoinManager().init(); // Initialize the CoinManager
 
   runApp(MyApp());
+  await dotenv.load(fileName: ".env");
 }
 
 class MyApp extends StatelessWidget {

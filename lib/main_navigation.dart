@@ -1,4 +1,3 @@
-// lib/main_navigation.dart (refactored)
 import 'package:flutter/material.dart';
 import 'package:rubisch/pages/history_page.dart';
 import 'package:rubisch/pages/home_page.dart';
@@ -18,6 +17,7 @@ class MainNavigation extends StatefulWidget {
 
 class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
+  final ScrollController _homeScrollController = ScrollController();
   late final CoinManager _coinManager;
   late final MLModelService _mlModelService;
   late final ScanService _scanService;
@@ -26,6 +26,18 @@ class _MainNavigationState extends State<MainNavigation> {
   void initState() {
     super.initState();
     _initializeServices();
+  }
+
+  void _onItemTapped(int index) {
+    if (index == 0 && _selectedIndex == 0) {
+      _homeScrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+
+    setState(() => _selectedIndex = index);
   }
 
   void _initializeServices() {
@@ -58,10 +70,6 @@ class _MainNavigationState extends State<MainNavigation> {
     }
   }
 
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-  }
-
   @override
   void dispose() {
     _mlModelService.dispose();
@@ -69,8 +77,11 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   List<Widget> get _pages => [
-    HomePage(coinManager: _coinManager),
-    const HistoryPage(),
+    HomePage(
+      scrollController: _homeScrollController,
+      coinManager: _coinManager,
+    ),
+    HistoryPage(),
   ];
 
   @override

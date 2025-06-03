@@ -28,7 +28,14 @@ class ArticleResponse {
               .map((x) => ArticleModel.fromJson(x))
               .where(
                 (article) =>
-                    article.author != null || article.urlToImage != null,
+                    article.author != null ||
+                    article.urlToImage != null ||
+                    article.content != null ||
+                    article.description != null ||
+                    article.publishedAt != null ||
+                    article.source != null ||
+                    article.title != null ||
+                    article.url != null,
               ),
         ),
       );

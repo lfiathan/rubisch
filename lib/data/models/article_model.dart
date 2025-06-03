@@ -1,14 +1,14 @@
 import 'package:rubisch/data/models/source_model.dart';
 
 class ArticleModel {
-  Source source;
+  Source? source;
   String? author;
-  String title;
-  String description;
-  String url;
+  String? title;
+  String? description;
+  String? url;
   String? urlToImage;
-  DateTime publishedAt;
-  String content;
+  DateTime? publishedAt;
+  String? content;
 
   ArticleModel({
     required this.source,
@@ -33,13 +33,13 @@ class ArticleModel {
   );
 
   Map<String, dynamic> toJson() => {
-    "source": source.toJson(),
+    "source": source!.toJson(),
     "author": author,
     "title": title,
     "description": description,
     "url": url,
     "urlToImage": urlToImage,
-    "publishedAt": publishedAt.toIso8601String(),
+    "publishedAt": publishedAt!.toIso8601String(),
     "content": content,
   };
 }

@@ -53,7 +53,7 @@ class ArticleCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      article.title,
+                      article.title!,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
@@ -72,7 +72,7 @@ class ArticleCard extends StatelessWidget {
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                           TextSpan(
-                            text: article.source.name,
+                            text: article.source!.name,
                             style: Theme.of(context).textTheme.bodySmall,
                           ),
                         ],
@@ -81,7 +81,7 @@ class ArticleCard extends StatelessWidget {
                     Align(
                       alignment: Alignment.centerRight,
                       child: Text(
-                        DateFormat('dd MMM yyyy').format(article.publishedAt),
+                        DateFormat('dd MMM yyyy').format(article.publishedAt!),
                         style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ),

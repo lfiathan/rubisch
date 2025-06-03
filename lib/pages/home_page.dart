@@ -1,12 +1,17 @@
+// lib/pages/home_page.dart (modifikasi)
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/components/carousel.dart';
 import 'package:rubisch/components/coin_information.dart';
 import 'package:rubisch/components/item_information.dart';
 import 'package:rubisch/pages/item_detail_page.dart';
+import 'package:rubisch/utils/coin_manager.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  // Tambahkan 'final' di sini
+  final CoinManager coinManager; // Pastikan ini ada dan final
+
+  const HomePage({super.key, required this.coinManager}); // Constructor sudah benar
 
   final List<Map<String, dynamic>> _items = const [
     {
@@ -88,11 +93,13 @@ class HomePage extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 32.h,
+          // Mengganti 'spacing' dengan children dan SizedBox untuk jarak antar widget
           children: [
-            SizedBox(),
+            SizedBox(height: 32.h), // Memberikan jarak awal
+
             Column(
-              spacing: 8.h,
+              // Jika Anda menggunakan 'spacing' di sini, pastikan ada package yang mendukungnya (misalnya, `gap` package)
+              // Jika tidak, gunakan SizedBox untuk jarak antar widget
               children: [
                 Text(
                   "Hello User !",
@@ -100,14 +107,17 @@ class HomePage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                SizedBox(height: 8.h), // Jarak antara dua Text
                 Text(
                   "Let's turn waste into value!",
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
               ],
             ),
+            SizedBox(height: 32.h), // Jarak setelah bagian "Hello User!"
+
             Column(
-              spacing: 16.h,
+              // Jika Anda menggunakan 'spacing' di sini, pastikan ada package yang mendukungnya
               children: [
                 CarouselWidget(
                   imageUrls: [
@@ -116,7 +126,19 @@ class HomePage extends StatelessWidget {
                     'https://pict.sindonews.net/dyn/732/pena/news/2020/05/14/45/28828/inilah-10-negara-terbaik-pendaur-ulang-sampah-kvf.jpg',
                   ],
                 ),
-                CoinInformation(coin: "1200"),
+                SizedBox(height: 16.h), // Jarak antara Carousel dan CoinInformation
+
+                // MENGGUNAKAN VALUELISTENABLEBUILDER DI SINI
+                ValueListenableBuilder<double>(
+                  valueListenable: coinManager.currentCoins,
+                  builder: (context, currentCoins, child) {
+                    return CoinInformation(
+                      coin: currentCoins.toInt().toString(), // Mengambil nilai koin terbaru
+                    );
+                  },
+                ),
+
+                SizedBox(height: 16.h), // Jarak setelah CoinInformation
 
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

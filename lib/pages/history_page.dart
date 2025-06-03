@@ -238,8 +238,8 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _buildImageWidget(ScanHistory history) {
-    if (history.imagePath != null && history.imagePath!.isNotEmpty) {
-      final file = File(history.imagePath!);
+    if (history.imagePath.isNotEmpty) {
+      final file = File(history.imagePath);
       if (file.existsSync()) {
         return Image.file(
           file,

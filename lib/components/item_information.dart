@@ -7,11 +7,7 @@ class ItemInformation extends StatelessWidget {
   final IconData icon;
   final VoidCallback? onTap;
 
-  const ItemInformation({
-    super.key,
-    required this.icon,
-    this.onTap,
-  });
+  const ItemInformation({super.key, required this.icon, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +19,7 @@ class ItemInformation extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.neutral,
           borderRadius: BorderRadius.circular(6.r),
-          border: Border.all(
-            color: AppColors.primary.withOpacity(0.2),
-            width: 1.w,
-          ),
+          border: Border.all(color: AppColors.accent, width: 1.w),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
@@ -35,11 +28,7 @@ class ItemInformation extends StatelessWidget {
             ),
           ],
         ),
-        child: Icon(
-          icon,
-          size: 24.sp,
-          color: AppColors.primary,
-        ),
+        child: Icon(icon, size: 24.sp, color: AppColors.primary),
       ),
     );
   }

@@ -79,45 +79,71 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Column(
+                spacing: 12.h,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Information",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    spacing: 8.w,
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 24.sp,
+                        color: AppColors.primary,
+                      ),
+                      Text(
+                        "Information",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8.h),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 5,
-                      crossAxisSpacing: 12.w,
+                      crossAxisSpacing: 2.w,
                       mainAxisSpacing: 12.h,
                       childAspectRatio: 1,
                     ),
                     // Gunakan kWasteCategories
                     itemCount: kWasteCategories.length,
                     itemBuilder: (context, index) {
-                      final item =
-                          kWasteCategories[index]; // Ambil dari data pusat
-                      return ItemInformation(
-                        icon: item.icon, // Akses properti objek WasteCategory
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => ItemDetailPage(
-                                    title: item.title,
-                                    description: item.description,
-                                    icon: item.icon,
-                                    price: item.price,
-                                  ),
+                      final item = kWasteCategories[index];
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: AspectRatio(
+                              aspectRatio: 1.25,
+                              child: ItemInformation(
+                                icon: item.icon,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ItemDetailPage(
+                                            title: item.title,
+                                            description: item.description,
+                                            icon: item.icon,
+                                            price: item.price,
+                                          ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            item.title,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -130,8 +156,8 @@ class _HomePageState extends State<HomePage> {
                     spacing: 8.w,
                     children: [
                       Icon(
-                        Icons.article,
-                        size: 28.sp,
+                        Icons.article_outlined,
+                        size: 24.sp,
                         color: AppColors.primary,
                       ),
                       Text(

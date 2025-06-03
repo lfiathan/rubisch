@@ -1,3 +1,4 @@
+// lib/pages/home_page.dart (modifikasi)
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/components/article_card.dart';
@@ -7,10 +8,15 @@ import 'package:rubisch/data/api/article_api.dart';
 import 'package:rubisch/data/models/article_response.dart';
 import 'package:rubisch/pages/pushed_pages/detail_article_page.dart';
 import 'package:rubisch/themes/colors.dart';
+import 'package:rubisch/components/item_information.dart';
+import 'package:rubisch/pages/item_detail_page.dart';
+import 'package:rubisch/utils/coin_manager.dart';
+import 'package:rubisch/data/waste_data.dart'; // Import data pusat
 
 class HomePage extends StatefulWidget {
   final ScrollController scrollController;
-  const HomePage({super.key, required this.scrollController});
+  final CoinManager coinManager;
+  const HomePage({super.key, required this.scrollController, required this.coinManager});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -58,9 +64,59 @@ class _HomePageState extends State<HomePage> {
                       'https://pict.sindonews.net/dyn/732/pena/news/2020/05/14/45/28828/inilah-10-negara-terbaik-pendaur-ulang-sampah-kvf.jpg',
                     ],
                   ),
-                  CoinInformation(coin: "1200"),
+                  ValueListenableBuilder<double>(
+                  valueListenable: coinManager.currentCoins,
+                  builder: (context, currentCoins, child) {
+                    return CoinInformation(
+                      coin: currentCoins.toInt().toString(),
+                    );
+                  },
+                ),
                 ],
               ),
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Information",
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    SizedBox(height: 8.h),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 5,
+                        crossAxisSpacing: 12.w,
+                        mainAxisSpacing: 12.h,
+                        childAspectRatio: 1,
+                      ),
+                      // Gunakan kWasteCategories
+                      itemCount: kWasteCategories.length,
+                      itemBuilder: (context, index) {
+                        final item = kWasteCategories[index]; // Ambil dari data pusat
+                        return ItemInformation(
+                          icon: item.icon, // Akses properti objek WasteCategory
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ItemDetailPage(
+                                  title: item.title,
+                                  description: item.description,
+                                  icon: item.icon,
+                                  price: item.price,
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
               Column(
                 spacing: 12.h,
                 children: [

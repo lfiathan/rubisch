@@ -8,7 +8,8 @@ import 'package:rubisch/data/models/article_response.dart';
 import 'package:rubisch/themes/colors.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final ScrollController scrollController;
+  const HomePage({super.key, required this.scrollController});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: SingleChildScrollView(
+          controller: widget.scrollController,
           child: Column(
             spacing: 28.h,
             crossAxisAlignment: CrossAxisAlignment.start,

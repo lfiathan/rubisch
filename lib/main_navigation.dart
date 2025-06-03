@@ -20,6 +20,7 @@ class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
   Interpreter? _interpreter;
   List<String>? _labels;
+  final ScrollController _homeScrollController = ScrollController();
 
   @override
   void initState() {
@@ -28,6 +29,14 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   void _onItemTapped(int index) {
+    if (index == 0 && _selectedIndex == 0) {
+      _homeScrollController.animateTo(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+
     setState(() => _selectedIndex = index);
   }
 
@@ -163,7 +172,7 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   List<Widget> get _pages => [
-    HomePage(),
+    HomePage(scrollController: _homeScrollController),
     SafeArea(child: Scaffold(body: Center(child: Text("Halaman 2")))),
   ];
 

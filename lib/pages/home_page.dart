@@ -5,6 +5,7 @@ import 'package:rubisch/components/carousel.dart';
 import 'package:rubisch/components/coin_information.dart';
 import 'package:rubisch/data/api/article_api.dart';
 import 'package:rubisch/data/models/article_response.dart';
+import 'package:rubisch/pages/pushed_pages/detail_article_page.dart';
 import 'package:rubisch/themes/colors.dart';
 
 class HomePage extends StatefulWidget {
@@ -104,7 +105,17 @@ class _HomePageState extends State<HomePage> {
                                   padding: EdgeInsets.only(bottom: 12.h),
                                   child: ArticleCard(
                                     article: articlesToShow[index],
-                                    onTap: () => {},
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => DetailArticlePage(
+                                                article: articlesToShow[index],
+                                              ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 );
                               },
@@ -131,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                                 children: [
                                   Icon(
                                     Icons.keyboard_arrow_down,
-                                    color: AppColors.primary,
+                                    color: AppColors.primaryDark,
                                     size: 28.sp,
                                   ),
                                   Text(
@@ -140,7 +151,7 @@ class _HomePageState extends State<HomePage> {
                                       context,
                                     ).textTheme.titleSmall?.copyWith(
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
+                                      color: AppColors.primaryDark,
                                     ),
                                   ),
                                 ],

@@ -1,13 +1,7 @@
-// lib/main_navigation.dart (refactored)
 import 'package:flutter/material.dart';
 import 'package:rubisch/pages/history_page.dart';
 import 'package:rubisch/pages/home_page.dart';
 import 'package:rubisch/themes/colors.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:tflite_flutter/tflite_flutter.dart';
-import 'package:rubisch/result_screen.dart';
-import 'dart:io';
-import 'package:image/image.dart' as img;
 import 'package:rubisch/utils/coin_manager.dart';
 import 'package:rubisch/service/ml_model_service.dart';
 import 'package:rubisch/service/scan_service.dart';
@@ -76,10 +70,6 @@ class _MainNavigationState extends State<MainNavigation> {
     }
   }
 
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-  }
-
   @override
   void dispose() {
     _mlModelService.dispose();
@@ -87,9 +77,11 @@ class _MainNavigationState extends State<MainNavigation> {
   }
 
   List<Widget> get _pages => [
-    HomePage(scrollController: _homeScrollController, coinManager: _coinManager),
-    SafeArea(child: Scaffold(body: Center(child: Text("Halaman 2")))),
-    const HistoryPage(),
+    HomePage(
+      scrollController: _homeScrollController,
+      coinManager: _coinManager,
+    ),
+    HistoryPage(),
   ];
 
   @override

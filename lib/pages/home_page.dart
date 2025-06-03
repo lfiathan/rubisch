@@ -16,7 +16,11 @@ import 'package:rubisch/data/waste_data.dart'; // Import data pusat
 class HomePage extends StatefulWidget {
   final ScrollController scrollController;
   final CoinManager coinManager;
-  const HomePage({super.key, required this.scrollController, required this.coinManager});
+  const HomePage({
+    super.key,
+    required this.scrollController,
+    required this.coinManager,
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -65,58 +69,60 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                   ValueListenableBuilder<double>(
-                  valueListenable: coinManager.currentCoins,
-                  builder: (context, currentCoins, child) {
-                    return CoinInformation(
-                      coin: currentCoins.toInt().toString(),
-                    );
-                  },
-                ),
+                    valueListenable: widget.coinManager.currentCoins,
+                    builder: (context, currentCoins, child) {
+                      return CoinInformation(
+                        coin: currentCoins.toInt().toString(),
+                      );
+                    },
+                  ),
                 ],
               ),
               Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Information",
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Information",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                    SizedBox(height: 8.h),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 5,
-                        crossAxisSpacing: 12.w,
-                        mainAxisSpacing: 12.h,
-                        childAspectRatio: 1,
-                      ),
-                      // Gunakan kWasteCategories
-                      itemCount: kWasteCategories.length,
-                      itemBuilder: (context, index) {
-                        final item = kWasteCategories[index]; // Ambil dari data pusat
-                        return ItemInformation(
-                          icon: item.icon, // Akses properti objek WasteCategory
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ItemDetailPage(
-                                  title: item.title,
-                                  description: item.description,
-                                  icon: item.icon,
-                                  price: item.price,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
+                  ),
+                  SizedBox(height: 8.h),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 5,
+                      crossAxisSpacing: 12.w,
+                      mainAxisSpacing: 12.h,
+                      childAspectRatio: 1,
                     ),
-                  ],
-                ),
+                    // Gunakan kWasteCategories
+                    itemCount: kWasteCategories.length,
+                    itemBuilder: (context, index) {
+                      final item =
+                          kWasteCategories[index]; // Ambil dari data pusat
+                      return ItemInformation(
+                        icon: item.icon, // Akses properti objek WasteCategory
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => ItemDetailPage(
+                                    title: item.title,
+                                    description: item.description,
+                                    icon: item.icon,
+                                    price: item.price,
+                                  ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
               Column(
                 spacing: 12.h,
                 children: [

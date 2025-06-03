@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/model/scan_history.dart';
 import 'package:rubisch/service/history_service.dart';
 import 'package:rubisch/themes/colors.dart';
+import 'dart:io';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -144,25 +145,6 @@ class _HistoryPageState extends State<HistoryPage> {
   }
 
   Widget _buildHistoryCard(ScanHistory history) {
-    // Function to get icon based on category
-    IconData _getCategoryIcon(String category) {
-      switch (category.toLowerCase()) {
-        case 'plastic':
-          return Icons.water_drop_outlined;
-        case 'paper':
-          return Icons.description_outlined;
-        case 'metal':
-          return Icons.hardware_outlined;
-        case 'glass':
-          return Icons.local_drink_outlined;
-        case 'organic':
-          return Icons.eco_outlined;
-        case 'electronic':
-          return Icons.electrical_services_outlined;
-        default:
-          return Icons.delete_outline;
-      }
-    }
 
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
@@ -183,7 +165,7 @@ class _HistoryPageState extends State<HistoryPage> {
       ),
       child: Row(
         children: [
-          // Category Icon
+          // Image or Category Icon
           Container(
             width: 80.w,
             height: 80.h,
@@ -191,10 +173,9 @@ class _HistoryPageState extends State<HistoryPage> {
               borderRadius: BorderRadius.circular(8.r),
               color: AppColors.primary.withOpacity(0.1),
             ),
-            child: Icon(
-              _getCategoryIcon(history.classificationResult),
-              size: 40.sp,
-              color: AppColors.primary,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.r),
+              child: _buildImageWidget(history),
             ),
           ),
 
@@ -253,6 +234,24 @@ class _HistoryPageState extends State<HistoryPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildImageWidget(ScanHistory history) {
+    if (history.imagePath != null && history.imagePath!.isNotEmpty) {
+      final file = File(history.imagePath!);
+      if (file.existsSync()) {
+        return Image.file(
+          file,
+          fit: BoxFit.cover,
+          width: double.infinity,
+          height: double.infinity,
+        );
+      }
+    }
+    
+    return Container(
+      color: AppColors.primary.withOpacity(0.05),
     );
   }
 }

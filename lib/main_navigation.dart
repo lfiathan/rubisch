@@ -1,5 +1,7 @@
+// lib/main_navigation.dart (modifikasi)
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:rubisch/pages/history_page.dart';
 import 'package:rubisch/pages/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rubisch/themes/colors.dart';
@@ -7,8 +9,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:rubisch/result_screen.dart';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:image/image.dart' as img;
+import 'package:rubisch/utils/coin_manager.dart'; // Import file CoinManager yang baru
 
 class MainNavigation extends StatefulWidget {
   const MainNavigation({super.key});
@@ -21,11 +23,14 @@ class _MainNavigationState extends State<MainNavigation> {
   int _selectedIndex = 0;
   Interpreter? _interpreter;
   List<String>? _labels;
+  final CoinManager _coinManager = CoinManager(); // Inisialisasi CoinManager
 
   @override
   void initState() {
     super.initState();
     _loadModel();
+    // Anda bisa memuat koin dari penyimpanan lokal di sini jika ada
+    // _coinManager.loadCoinsFromStorage();
   }
 
   void _onItemTapped(int index) {
@@ -61,7 +66,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   Future<void> _scanGarbage() async {
     if (_interpreter == null || _labels == null) {
-      print("Model not loaded yet");
+      print("Model belum dimuat");
       return;
     }
 
@@ -70,7 +75,7 @@ class _MainNavigationState extends State<MainNavigation> {
       final pickedFile = await picker.pickImage(source: ImageSource.camera);
 
       if (pickedFile == null) {
-        return; // User cancelled the picker
+        return; // Pengguna membatalkan pengambilan gambar
       }
 
       // Preprocess the image
@@ -79,7 +84,7 @@ class _MainNavigationState extends State<MainNavigation> {
       final image = img.decodeImage(imageBytes);
 
       if (image == null) {
-        print("Failed to decode image");
+        print("Gagal mendekode gambar");
         return;
       }
 
@@ -100,22 +105,27 @@ class _MainNavigationState extends State<MainNavigation> {
 
       // Get prediction
       final prediction = _getPrediction(output[0]);
+      
+      // Debug: print prediction result
+      print('Prediksi ML: ${prediction['label']} dengan kepercayaan: ${prediction['confidence']}');
 
+      // Navigasi ke ResultScreen dan teruskan instance CoinManager
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder:
-              (context) => ResultScreen(
-                classificationResult: prediction['label'] ?? 'Unknown',
-              ),
+          builder: (context) => ResultScreen(
+            classificationResult: prediction['label'] ?? 'Unknown',
+            imagePath: pickedFile.path, // Teruskan path gambar
+            coinManager: _coinManager, // Teruskan CoinManager
+          ),
         ),
       );
     } catch (e) {
-      print("Error scanning garbage: $e");
-      // Optionally show an error message to the user
+      print("Error memindai sampah: $e");
+      // Opsional tampilkan pesan error kepada pengguna
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Error scanning image: $e")));
+      ).showSnackBar(SnackBar(content: Text("Error memindai gambar: $e")));
     }
   }
 
@@ -163,9 +173,10 @@ class _MainNavigationState extends State<MainNavigation> {
     };
   }
 
+  // Teruskan instance CoinManager ke HomePage
   List<Widget> get _pages => [
-    HomePage(),
-    SafeArea(child: Scaffold(body: Center(child: Text("Halaman 2")))),
+    HomePage(coinManager: _coinManager), // Teruskan coinManager di sini
+    HistoryPage() // Asumsi HistoryPage tidak memerlukan CoinManager untuk saat ini
   ];
 
   @override
@@ -269,4 +280,3 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
-

@@ -44,8 +44,31 @@ class HistoryService {
     }
   }
 
-  // Save scan history
-  static Future<void> saveHistory(ScanHistory history) async {
+  // Get all history - sorted by newest first
+  static Future<List<ScanHistory>> getHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString(_historyKey);
+      
+      if (jsonString == null || jsonString.isEmpty) {
+        return [];
+      }
+      
+      final List<dynamic> historyJson = jsonDecode(jsonString);
+      final historyList = historyJson.map((json) => ScanHistory.fromMap(json)).toList();
+      
+      // Sort by newest first
+      historyList.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+      
+      return historyList;
+    } catch (e) {
+      print('Error loading history: $e');
+      return [];
+    }
+  }
+
+  // Add new history (enhanced version)
+  static Future<void> addHistory(ScanHistory history) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       
@@ -57,35 +80,58 @@ class HistoryService {
       
       // Keep only last 100 entries to prevent excessive storage
       if (historyList.length > 100) {
+        // Remove excess entries and their associated image files
+        final excessItems = historyList.sublist(100);
+        for (final item in excessItems) {
+          try {
+            final imageFile = File(item.imagePath);
+            if (await imageFile.exists()) {
+              await imageFile.delete();
+            }
+          } catch (e) {
+            print('Error deleting excess image file: $e');
+          }
+        }
         historyList.removeRange(100, historyList.length);
       }
       
-      // Convert to JSON string
+      // Convert to JSON string and save
       final historyJson = historyList.map((h) => h.toMap()).toList();
       final jsonString = jsonEncode(historyJson);
       
-      // Save to SharedPreferences
       await prefs.setString(_historyKey, jsonString);
     } catch (e) {
-      print('Error saving history: $e');
+      print('Error adding history: $e');
+      throw Exception('Failed to add history');
     }
   }
 
-  // Get all scan history
-  static Future<List<ScanHistory>> getHistory() async {
+  // Save scan history (wrapper for addHistory for backward compatibility)
+  static Future<void> saveHistory(ScanHistory history) async {
+    await addHistory(history);
+  }
+
+  // Update existing history
+  static Future<void> updateHistory(ScanHistory updatedHistory) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final jsonString = prefs.getString(_historyKey);
+      final historyList = await getHistory();
       
-      if (jsonString == null || jsonString.isEmpty) {
-        return [];
+      final index = historyList.indexWhere((h) => h.id == updatedHistory.id);
+      if (index != -1) {
+        historyList[index] = updatedHistory;
+        
+        // Convert to JSON string and save
+        final historyJson = historyList.map((h) => h.toMap()).toList();
+        final jsonString = jsonEncode(historyJson);
+        
+        await prefs.setString(_historyKey, jsonString);
+      } else {
+        throw Exception('History not found');
       }
-      
-      final List<dynamic> historyJson = jsonDecode(jsonString);
-      return historyJson.map((json) => ScanHistory.fromMap(json)).toList();
     } catch (e) {
-      print('Error loading history: $e');
-      return [];
+      print('Error updating history: $e');
+      throw Exception('Failed to update history');
     }
   }
 
@@ -117,26 +163,12 @@ class HistoryService {
         final historyJson = historyList.map((h) => h.toMap()).toList();
         final jsonString = jsonEncode(historyJson);
         await prefs.setString(_historyKey, jsonString);
+      } else {
+        throw Exception('History not found');
       }
     } catch (e) {
       print('Error deleting history: $e');
-    }
-  }
-
-  // Clear all history
-  static Future<void> clearAllHistory() async {
-    try {
-      // Delete all image files
-      final historyDir = await _getHistoryDirectory();
-      if (await historyDir.exists()) {
-        await historyDir.delete(recursive: true);
-      }
-      
-      // Clear SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_historyKey);
-    } catch (e) {
-      print('Error clearing history: $e');
+      throw Exception('Failed to delete history');
     }
   }
 

@@ -18,7 +18,7 @@ class ItemInformation extends StatelessWidget {
         height: 24.w,
         decoration: BoxDecoration(
           color: AppColors.neutral,
-          borderRadius: BorderRadius.circular(6.r),
+          borderRadius: BorderRadius.circular(8.r),
           border: Border.all(color: AppColors.accent, width: 1.w),
           boxShadow: [
             BoxShadow(

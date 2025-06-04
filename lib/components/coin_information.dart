@@ -13,11 +13,8 @@ class CoinInformation extends StatelessWidget {
     return Container(
       height: 48.h,
       decoration: BoxDecoration(
-        color: AppColors.neutral,
-        border: Border(
-          bottom: BorderSide(color: AppColors.accent, width: 2.w),
-          right: BorderSide(color: AppColors.accent, width: 2.w),
-        ),
+        color: AppColors.light,
+        border: Border.all(color: AppColors.accent, width: 2.w),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),

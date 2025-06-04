@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/model/scan_history.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'package:rubisch/pages/item_detail_page.dart';
+import 'package:rubisch/data/waste_data.dart'; // Import waste data
 import 'dart:io';
 
 class HistoryDetailPage extends StatefulWidget {
@@ -58,19 +59,88 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
     return '${dateTime.day.toString().padLeft(2, '0')} ${months[dateTime.month - 1]} ${dateTime.year}';
   }
 
-  void _navigateToItemDetail() {
-    // Navigate to ItemDetailPage using existing data from history
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ItemDetailPage(
-          title: _history.rubbishName,
-          description: 'Detailed information about ${_history.classificationResult}', // You can customize this or get from existing data source
-          icon: Icons.recycling, // You can map this based on classification if needed
-          price: _history.price,
-        ),
-      ),
+  // Method to find matching waste category from waste_data.dart
+  WasteCategory? _findWasteCategory(String classificationResult) {
+    // Normalize the classification result for comparison
+    String normalizedResult = classificationResult.toLowerCase().trim();
+    
+    // Try to find exact match first
+    WasteCategory? exactMatch = kWasteCategories.firstWhere(
+      (category) => category.title.toLowerCase() == normalizedResult,
+      orElse: () => kWasteCategories.first, // fallback to first category
     );
+    
+    if (exactMatch.title.toLowerCase() == normalizedResult) {
+      return exactMatch;
+    }
+    
+    // If no exact match, try partial matches with mapping
+    Map<String, String> categoryMapping = {
+      'plastik': 'plastic',
+      'kertas': 'paper',
+      'logam': 'metal',
+      'kaca': 'glass',
+      'organik': 'biological',
+      'elektronik': 'trash', // or create electronics category
+      'baterai': 'battery',
+      'kardus': 'cardboard',
+      'karton': 'cardboard',
+      'pakaian': 'clothes',
+      'sepatu': 'shoes',
+      'makanan': 'biological',
+      'organic': 'biological',
+      'electronic': 'trash',
+    };
+    
+    // Check if the classification result contains any mapped keywords
+    for (String key in categoryMapping.keys) {
+      if (normalizedResult.contains(key)) {
+        String mappedCategory = categoryMapping[key]!;
+        WasteCategory? foundCategory = kWasteCategories.firstWhere(
+          (category) => category.title.toLowerCase() == mappedCategory,
+          orElse: () => kWasteCategories.first,
+        );
+        if (foundCategory.title.toLowerCase() == mappedCategory) {
+          return foundCategory;
+        }
+      }
+    }
+    
+    // If still no match found, return the first category as fallback
+    return kWasteCategories.first;
+  }
+
+  void _navigateToItemDetail() {
+    // Find the corresponding waste category from waste_data.dart
+    WasteCategory? wasteCategory = _findWasteCategory(_history.classificationResult);
+    
+    if (wasteCategory != null) {
+      // Navigate to ItemDetailPage using data from waste_data.dart
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ItemDetailPage(
+            title: wasteCategory.title,
+            description: wasteCategory.description,
+            icon: wasteCategory.icon,
+            price: wasteCategory.price, // Use price from waste_data.dart
+          ),
+        ),
+      );
+    } else {
+      // Fallback navigation if category not found
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ItemDetailPage(
+            title: _history.classificationResult,
+            description: 'Informasi detail tentang ${_history.classificationResult}. Item ini dapat didaur ulang untuk membantu lingkungan.',
+            icon: Icons.recycling,
+            price: _history.price,
+          ),
+        ),
+      );
+    }
   }
 
   void _showEditDialog() {
@@ -190,6 +260,9 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Get the waste category for UI display
+    WasteCategory? wasteCategory = _findWasteCategory(_history.classificationResult);
+    
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: AppBar(
@@ -257,15 +330,15 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                     ),
                   ),
 
-                  // Category Section
+                  // Category Section with icon from waste data
                   _buildDetailRow(
-                    icon: Icons.category,
+                    icon: wasteCategory?.icon ?? Icons.category,
                     iconColor: AppColors.primary,
                     value: 'Category: ${_history.classificationResult}',
                     textColor: AppColors.dark,
                   ),
 
-                  // Price Section
+                  // Price Section - Show both history price and category base price
                   _buildDetailRow(
                     icon: Icons.monetization_on,
                     iconColor: Colors.green,
@@ -273,6 +346,16 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                     isBold: false,
                     textColor: AppColors.primary,
                   ),
+
+                  // Base Price from Waste Data (if different from history price)
+                  if (wasteCategory != null && wasteCategory.price != _history.price)
+                    _buildDetailRow(
+                      icon: Icons.info_outline,
+                      iconColor: Colors.orange,
+                      value: 'Base Price: ${wasteCategory.price} btc',
+                      isBold: false,
+                      textColor: Colors.orange,
+                    ),
 
                   // Date Section
                   _buildDetailRow(
@@ -286,10 +369,11 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
             ),
           ),
 
-          // Information Button - Fixed at bottom (Now clickable)
+          // Enhanced Information Button - Uses waste category data
           GestureDetector(
             onTap: _navigateToItemDetail,
-            child: Container(
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 200),
               width: double.infinity,
               margin: EdgeInsets.all(16.w),
               height: 48.h,
@@ -299,6 +383,14 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                   bottom: BorderSide(color: AppColors.accent, width: 2.w),
                   right: BorderSide(color: AppColors.accent, width: 2.w),
                 ),
+                borderRadius: BorderRadius.circular(4.r),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -306,7 +398,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.info_outline,
+                      wasteCategory?.icon ?? Icons.info_outlined,
                       size: 24.sp,
                       color: AppColors.primary,
                     ),
@@ -317,17 +409,20 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                           children: [
                             TextSpan(
                               text: "Information about ",
-                              style: TextStyle(fontWeight: FontWeight.normal),
+                              style: TextStyle(
+                                fontWeight: FontWeight.normal,
+                                color: AppColors.dark,
+                              ),
                             ),
                             TextSpan(
-                              text: _history.classificationResult,
+                              text: wasteCategory?.title ?? _history.classificationResult,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primary,
                               ),
                             ),
                           ],
-                          style: Theme.of(context).textTheme.titleSmall,
+                          style: TextStyle(fontSize: 14.sp),
                         ),
                       ),
                     ),

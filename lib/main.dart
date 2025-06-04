@@ -11,14 +11,16 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Hive first (safe to call multiple times)
-  await Hive.initFlutter();
+  await Hive.initFlutter(); //
+
+  // Load environment variables FIRST
+  await dotenv.load(fileName: ".env"); //
 
   // Initialize your services
-  await HistoryService.init();
+  await HistoryService.init(); //
   await CoinManager().init(); // Initialize the CoinManager
 
-  runApp(MyApp());
-  await dotenv.load(fileName: ".env");
+  runApp(MyApp()); //
 }
 
 class MyApp extends StatelessWidget {

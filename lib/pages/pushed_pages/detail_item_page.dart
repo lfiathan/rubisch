@@ -20,7 +20,7 @@ class ItemDetailPage extends StatelessWidget {
   // Function to get image URL based on item title
   String _getImageUrl(String itemTitle) {
     String searchTerm = itemTitle.toLowerCase();
-    
+
     // Map common waste items to appropriate search terms
     if (searchTerm.contains('botol')) {
       if (searchTerm.contains('plastik')) {
@@ -36,11 +36,13 @@ class ItemDetailPage extends StatelessWidget {
       return 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&h=300&fit=crop';
     } else if (searchTerm.contains('kaca')) {
       return 'https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=400&h=300&fit=crop';
-    } else if (searchTerm.contains('elektronik') || searchTerm.contains('gadget')) {
+    } else if (searchTerm.contains('elektronik') ||
+        searchTerm.contains('gadget')) {
       return 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop';
     } else if (searchTerm.contains('baterai')) {
       return 'https://images.unsplash.com/photo-1609592806131-9fb8eb5d4d3c?w=400&h=300&fit=crop';
-    } else if (searchTerm.contains('organik') || searchTerm.contains('sisa makanan')) {
+    } else if (searchTerm.contains('organik') ||
+        searchTerm.contains('sisa makanan')) {
       return 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=300&fit=crop';
     } else {
       // Default waste/recycling image
@@ -48,20 +50,15 @@ class ItemDetailPage extends StatelessWidget {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.light,
       appBar: AppBar(
-        backgroundColor: AppColors.light,
+        backgroundColor: AppColors.neutral,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: AppColors.dark,
-          ),
+          icon: Icon(Icons.arrow_back, color: AppColors.dark),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -133,18 +130,15 @@ class ItemDetailPage extends StatelessWidget {
                 ),
               ),
             ),
-            
+
             SizedBox(height: 24.h),
 
             // Price Information Section
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppColors.neutral,
-                border: Border(
-                  bottom: BorderSide(color: AppColors.accent, width: 2.w),
-                  right: BorderSide(color: AppColors.accent, width: 2.w),
-                ),
+                color: AppColors.light,
+                border: Border.all(color: AppColors.accent, width: 2.w),
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -174,16 +168,13 @@ class ItemDetailPage extends StatelessWidget {
             ),
 
             SizedBox(height: 16.h),
-            
+
             // Description Section
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: AppColors.neutral,
-                border: Border(
-                  bottom: BorderSide(color: AppColors.accent, width: 2.w),
-                  right: BorderSide(color: AppColors.accent, width: 2.w),
-                ),
+                color: AppColors.light,
+                border: Border.all(color: AppColors.accent, width: 2.w),
               ),
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),

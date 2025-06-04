@@ -183,6 +183,7 @@ class _HomePageState extends State<HomePage> {
                             allArticles.take(maxToShow).toList();
 
                         return Column(
+                          spacing: 16.h,
                           children: [
                             ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
@@ -219,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                                 minimumSize: Size(double.infinity, 40.h),
                                 padding: EdgeInsets.symmetric(vertical: 12.h),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4.r),
+                                  borderRadius: BorderRadius.circular(12.r),
                                   side: BorderSide(color: AppColors.primary),
                                 ),
                               ),

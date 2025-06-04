@@ -37,7 +37,7 @@ class _ResultScreenState extends State<ResultScreen> {
     // Inisialisasi map saat initState
     _wasteCategoriesMap = {
       for (var category in kWasteCategories)
-        category.title.toLowerCase(): category
+        category.title.toLowerCase(): category,
     };
   }
 
@@ -74,19 +74,24 @@ class _ResultScreenState extends State<ResultScreen> {
 
     try {
       final rubbishName = _rubbishNameController.text.trim();
-      final WasteCategory selectedCategory = _getWasteCategory(); // Gunakan objek WasteCategory
+      final WasteCategory selectedCategory =
+          _getWasteCategory(); // Gunakan objek WasteCategory
       final int price = selectedCategory.price;
 
       final history = await HistoryService.createHistoryFromScan(
         tempImagePath: widget.imagePath!,
-        classificationResult: widget.classificationResult, // Tetap gunakan hasil asli untuk riwayat
+        classificationResult:
+            widget
+                .classificationResult, // Tetap gunakan hasil asli untuk riwayat
         rubbishName: rubbishName,
         price: price,
       );
 
       await HistoryService.saveHistory(history);
 
-      widget.coinManager.addCoins(price.toDouble()); // Pastikan ini double jika CoinManager mengharapkan double
+      widget.coinManager.addCoins(
+        price.toDouble(),
+      ); // Pastikan ini double jika CoinManager mengharapkan double
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -132,7 +137,8 @@ class _ResultScreenState extends State<ResultScreen> {
     // Ini mungkin tidak diperlukan jika ML selalu menghasilkan nama yang cocok dengan salah satu kategori
     if (category == null) {
       for (var entry in _wasteCategoriesMap.entries) {
-        if (normalizedClassification.contains(entry.key) || entry.key.contains(normalizedClassification)) {
+        if (normalizedClassification.contains(entry.key) ||
+            entry.key.contains(normalizedClassification)) {
           category = entry.value;
           break;
         }
@@ -140,9 +146,12 @@ class _ResultScreenState extends State<ResultScreen> {
     }
 
     // Default ke 'Trash' jika tidak ada yang cocok
-    category ??= _wasteCategoriesMap['trash']!; // Pastikan 'trash' selalu ada di map Anda
+    category ??=
+        _wasteCategoriesMap['trash']!; // Pastikan 'trash' selalu ada di map Anda
 
-    print('Menggunakan kategori: ${category.title} dengan harga ${category.price} btc');
+    print(
+      'Menggunakan kategori: ${category.title} dengan harga ${category.price} btc',
+    );
     return category;
   }
 
@@ -157,18 +166,17 @@ class _ResultScreenState extends State<ResultScreen> {
         backgroundColor: AppColors.light,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.dark),
+          icon: Icon(Icons.arrow_back, color: AppColors.dark),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Classification Result',
-          style: TextStyle(
+          "Classification Result",
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
             color: AppColors.dark,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: false,
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -198,19 +206,21 @@ class _ResultScreenState extends State<ResultScreen> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12.r),
-                          child: widget.imagePath != null
-                              ? Image.file(
-                                  File(widget.imagePath!),
-                                  fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  color: Colors.grey[300],
-                                  child: Icon(
-                                    currentCategory.icon, // Akses icon dari objek
-                                    size: 80.sp,
-                                    color: AppColors.primary,
+                          child:
+                              widget.imagePath != null
+                                  ? Image.file(
+                                    File(widget.imagePath!),
+                                    fit: BoxFit.cover,
+                                  )
+                                  : Container(
+                                    color: Colors.grey[300],
+                                    child: Icon(
+                                      currentCategory
+                                          .icon, // Akses icon dari objek
+                                      size: 80.sp,
+                                      color: AppColors.primary,
+                                    ),
                                   ),
-                                ),
                         ),
                       ),
                     ),
@@ -219,7 +229,11 @@ class _ResultScreenState extends State<ResultScreen> {
 
                     Row(
                       children: [
-                        Icon(Icons.delete, color: AppColors.primary, size: 24.sp),
+                        Icon(
+                          Icons.delete,
+                          color: AppColors.primary,
+                          size: 24.sp,
+                        ),
                         SizedBox(width: 12.w),
                         Expanded(
                           child: TextField(
@@ -309,22 +323,25 @@ class _ResultScreenState extends State<ResultScreen> {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                     ),
-                    child: _isSaving
-                        ? SizedBox(
-                            height: 20.h,
-                            width: 20.w,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(AppColors.light),
+                    child:
+                        _isSaving
+                            ? SizedBox(
+                              height: 20.h,
+                              width: 20.w,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppColors.light,
+                                ),
+                              ),
+                            )
+                            : Text(
+                              'Sell',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          )
-                        : Text(
-                            'Sell',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
                   ),
                 ),
                 SizedBox(width: 16.w),

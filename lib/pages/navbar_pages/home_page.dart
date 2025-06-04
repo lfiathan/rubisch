@@ -9,7 +9,7 @@ import 'package:rubisch/data/models/article_response.dart';
 import 'package:rubisch/pages/pushed_pages/detail_article_page.dart';
 import 'package:rubisch/themes/colors.dart';
 import 'package:rubisch/components/item_information.dart';
-import 'package:rubisch/pages/item_detail_page.dart';
+import 'package:rubisch/pages/pushed_pages/detail_item_page.dart';
 import 'package:rubisch/utils/coin_manager.dart';
 import 'package:rubisch/data/waste_data.dart'; // Import data pusat
 
@@ -79,45 +79,71 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               Column(
+                spacing: 12.h,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Information",
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    spacing: 8.w,
+                    children: [
+                      Icon(
+                        Icons.info_outline,
+                        size: 24.sp,
+                        color: AppColors.primary,
+                      ),
+                      Text(
+                        "Information",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 8.h),
                   GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 5,
-                      crossAxisSpacing: 12.w,
+                      crossAxisSpacing: 2.w,
                       mainAxisSpacing: 12.h,
                       childAspectRatio: 1,
                     ),
                     // Gunakan kWasteCategories
                     itemCount: kWasteCategories.length,
                     itemBuilder: (context, index) {
-                      final item =
-                          kWasteCategories[index]; // Ambil dari data pusat
-                      return ItemInformation(
-                        icon: item.icon, // Akses properti objek WasteCategory
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => ItemDetailPage(
-                                    title: item.title,
-                                    description: item.description,
-                                    icon: item.icon,
-                                    price: item.price,
-                                  ),
+                      final item = kWasteCategories[index];
+
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: AspectRatio(
+                              aspectRatio: 1.25,
+                              child: ItemInformation(
+                                icon: item.icon,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ItemDetailPage(
+                                            title: item.title,
+                                            description: item.description,
+                                            icon: item.icon,
+                                            price: item.price,
+                                          ),
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
-                          );
-                        },
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            item.title,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
                       );
                     },
                   ),
@@ -130,8 +156,8 @@ class _HomePageState extends State<HomePage> {
                     spacing: 8.w,
                     children: [
                       Icon(
-                        Icons.article,
-                        size: 28.sp,
+                        Icons.article_outlined,
+                        size: 24.sp,
                         color: AppColors.primary,
                       ),
                       Text(
@@ -157,6 +183,7 @@ class _HomePageState extends State<HomePage> {
                             allArticles.take(maxToShow).toList();
 
                         return Column(
+                          spacing: 16.h,
                           children: [
                             ListView.builder(
                               physics: NeverScrollableScrollPhysics(),
@@ -193,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                                 minimumSize: Size(double.infinity, 40.h),
                                 padding: EdgeInsets.symmetric(vertical: 12.h),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(4.r),
+                                  borderRadius: BorderRadius.circular(12.r),
                                   side: BorderSide(color: AppColors.primary),
                                 ),
                               ),

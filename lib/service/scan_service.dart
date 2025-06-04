@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:rubisch/service/camera_service.dart';
 import 'package:rubisch/service/ml_model_service.dart';
-import 'package:rubisch/result_screen.dart';
+import 'package:rubisch/pages/pushed_pages/result_page.dart';
 import 'package:rubisch/utils/coin_manager.dart';
 import 'dart:io';
 

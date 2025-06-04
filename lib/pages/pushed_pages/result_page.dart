@@ -158,18 +158,17 @@ class _ResultScreenState extends State<ResultScreen> {
         backgroundColor: AppColors.light,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: AppColors.dark),
+          icon: Icon(Icons.arrow_back, color: AppColors.dark),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Classification Result',
-          style: TextStyle(
+          "Classification Result",
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
             color: AppColors.dark,
-            fontSize: 18.sp,
-            fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: false,
+        centerTitle: true,
       ),
       body: Column(
         children: [

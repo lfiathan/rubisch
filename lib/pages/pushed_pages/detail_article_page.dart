@@ -60,7 +60,6 @@ class DetailArticlePage extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.light,
-                      borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: AppColors.accent, width: 2.w),
                     ),
                     child: Text(
@@ -94,7 +93,7 @@ class DetailArticlePage extends StatelessWidget {
                       ),
                     ),
                     TextSpan(
-                      text: article.author,
+                      text: article.author ?? "Unknown Author",
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -127,7 +126,7 @@ class DetailArticlePage extends StatelessWidget {
                   minimumSize: Size(double.infinity, 40.h),
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4.r),
+                    borderRadius: BorderRadius.circular(12.r),
                     side: BorderSide(color: AppColors.primary),
                   ),
                 ),

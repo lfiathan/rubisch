@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:rubisch/model/scan_history.dart';
 import 'package:rubisch/themes/colors.dart';
-import 'package:rubisch/pages/history_detail_page.dart';
+import 'package:rubisch/pages/pushed_pages/detail_history_page.dart';
 import 'dart:io';
 
 class HistoryCard extends StatelessWidget {

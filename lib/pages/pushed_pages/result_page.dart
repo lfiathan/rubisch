@@ -48,6 +48,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Future<void> _sellItem() async {
+    // --- Validation Steps ---
     if (_rubbishNameController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -68,31 +69,35 @@ class _ResultScreenState extends State<ResultScreen> {
       return;
     }
 
+    // --- UI State Management ---
     setState(() {
       _isSaving = true;
     });
 
     try {
+      // --- STEP 5.1: GATHER DATA FOR SAVING ---
       final rubbishName = _rubbishNameController.text.trim();
-      final WasteCategory selectedCategory =
-          _getWasteCategory(); // Gunakan objek WasteCategory
+      final WasteCategory selectedCategory = _getWasteCategory();
       final int price = selectedCategory.price;
 
+      // --- STEP 5.2: CREATE THE HISTORY RECORD ---
+      // Your HistoryService correctly handles moving the temporary image to permanent storage.
       final history = await HistoryService.createHistoryFromScan(
         tempImagePath: widget.imagePath!,
-        classificationResult:
-            widget
-                .classificationResult, // Tetap gunakan hasil asli untuk riwayat
+        classificationResult: widget.classificationResult,
         rubbishName: rubbishName,
         price: price,
       );
 
+      // --- STEP 5.3: SAVE THE RECORD TO LOCAL STORAGE ---
+      // This saves the record to SharedPreferences.
       await HistoryService.saveHistory(history);
 
-      widget.coinManager.addCoins(
-        price.toDouble(),
-      ); // Pastikan ini double jika CoinManager mengharapkan double
+      // --- STEP 5.4: UPDATE THE USER'S POINTS/COINS ---
+      // Your CoinManager handles updating the user's balance.
+      widget.coinManager.addCoins(price.toDouble());
 
+      // --- STEP 5.5: PROVIDE USER FEEDBACK AND NAVIGATE ---
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -102,10 +107,11 @@ class _ResultScreenState extends State<ResultScreen> {
             backgroundColor: AppColors.primary,
           ),
         );
-
+        // Navigates back to the first screen in the stack after a successful save.
         Navigator.popUntil(context, (route) => route.isFirst);
       }
     } catch (e) {
+      // --- Robust Error Handling ---
       print('Error menyimpan item: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -116,6 +122,7 @@ class _ResultScreenState extends State<ResultScreen> {
         );
       }
     } finally {
+      // --- Final UI State Update ---
       if (mounted) {
         setState(() {
           _isSaving = false;
@@ -124,17 +131,9 @@ class _ResultScreenState extends State<ResultScreen> {
     }
   }
 
-  // Mengubah _getItemData menjadi _getWasteCategory
   WasteCategory _getWasteCategory() {
-    print('Classification Result: "${widget.classificationResult}"');
-
     final normalizedClassification = widget.classificationResult.toLowerCase();
-
-    // Coba pencocokan tepat menggunakan map
     WasteCategory? category = _wasteCategoriesMap[normalizedClassification];
-
-    // Fallback untuk pencocokan parsial jika klasifikasi tidak tepat sama dengan kunci map
-    // Ini mungkin tidak diperlukan jika ML selalu menghasilkan nama yang cocok dengan salah satu kategori
     if (category == null) {
       for (var entry in _wasteCategoriesMap.entries) {
         if (normalizedClassification.contains(entry.key) ||
@@ -144,14 +143,7 @@ class _ResultScreenState extends State<ResultScreen> {
         }
       }
     }
-
-    // Default ke 'Trash' jika tidak ada yang cocok
-    category ??=
-        _wasteCategoriesMap['trash']!; // Pastikan 'trash' selalu ada di map Anda
-
-    print(
-      'Menggunakan kategori: ${category.title} dengan harga ${category.price} btc',
-    );
+    category ??= _wasteCategoriesMap['trash']!;
     return category;
   }
 

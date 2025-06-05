@@ -1,11 +1,11 @@
 // lib/data/waste_data.dart
-import 'package:flutter/material.dart'; // Import ini karena menggunakan Icons
+import 'package:flutter/material.dart';
 
 class WasteCategory {
   final String title;
   final IconData icon;
   final String description;
-  final int price; // Gunakan int jika ini harga dasar
+  final int price;
 
   const WasteCategory({
     required this.title,
@@ -14,97 +14,94 @@ class WasteCategory {
     required this.price,
   });
 
-  // Metode helper untuk mengonversi menjadi Map jika diperlukan
   Map<String, dynamic> toMap() {
     return {
       'title': title,
-      'icon': icon.codePoint, // Simpan codePoint dari IconData
+      'icon': icon.codePoint,
       'description': description,
       'price': price,
     };
   }
 
-  // Metode helper untuk membuat dari Map (jika diambil dari JSON, dll.)
   factory WasteCategory.fromMap(Map<String, dynamic> map) {
     return WasteCategory(
       title: map['title'] as String,
-      icon: IconData(map['icon'] as int, fontFamily: 'MaterialIcons'), // Konversi kembali
+      icon: IconData(map['icon'] as int, fontFamily: 'MaterialIcons'),
       description: map['description'] as String,
       price: map['price'] as int,
     );
   }
 }
 
-// Daftar statis dari semua kategori sampah
 const List<WasteCategory> kWasteCategories = [
   WasteCategory(
     title: 'Plastic',
     icon: Icons.local_drink,
     description:
-        'Botol plastik adalah salah satu jenis sampah yang paling umum ditemukan dan dapat didaur ulang dengan efektif. Dengan mendaur ulang botol plastik, kita dapat mengurangi pencemaran lingkungan dan menghemat sumber daya alam.',
+        'Plastic bottles are one of the most common types of waste and can be effectively recycled. Recycling plastic bottles helps reduce environmental pollution and conserve natural resources.',
     price: 800,
   ),
   WasteCategory(
     title: 'Battery',
     icon: Icons.battery_charging_full,
     description:
-        'Baterai bekas mengandung bahan kimia berbahaya yang harus didaur ulang dengan benar. Daur ulang baterai mencegah pencemaran tanah dan air, serta memungkinkan pemulihan logam berharga seperti lithium dan kobalt.',
+        'Used batteries contain harmful chemicals that must be properly recycled. Battery recycling prevents soil and water contamination and allows the recovery of valuable metals like lithium and cobalt.',
     price: 1200,
   ),
   WasteCategory(
     title: 'Cardboard',
     icon: Icons.description,
     description:
-        'Kardus adalah material kemasan yang sangat mudah didaur ulang. Daur ulang kardus membantu mengurangi penebangan pohon dan menghemat energi dalam proses produksi kemasan baru.',
+        'Cardboard is a packaging material that is very easy to recycle. Recycling cardboard helps reduce deforestation and saves energy in the production of new packaging.',
     price: 300,
   ),
   WasteCategory(
     title: 'Clothes',
     icon: Icons.checkroom,
     description:
-        'Pakaian bekas dapat didaur ulang menjadi serat tekstil baru atau produk lainnya. Daur ulang pakaian membantu mengurangi limbah tekstil dan menghemat sumber daya dalam industri fashion.',
+        'Used clothes can be recycled into new textile fibers or other products. Clothing recycling helps reduce textile waste and conserves resources in the fashion industry.',
     price: 600,
   ),
   WasteCategory(
     title: 'Paper',
     icon: Icons.receipt,
     description:
-        'Kertas adalah salah satu material yang paling mudah didaur ulang. Dengan mendaur ulang kertas, kita dapat mengurangi penebangan pohon dan menghemat air serta energi dalam proses produksi.',
+        'Paper is one of the easiest materials to recycle. Recycling paper reduces deforestation and saves water and energy in the production process.',
     price: 400,
   ),
   WasteCategory(
     title: 'Shoes',
     icon: Icons.ice_skating,
     description:
-        'Sepatu bekas dapat didaur ulang dengan memisahkan berbagai komponennya seperti karet sol, kulit, dan tekstil. Daur ulang sepatu membantu mengurangi limbah dan menciptakan produk baru.',
+        'Used shoes can be recycled by separating their components such as rubber soles, leather, and textiles. Recycling shoes helps reduce waste and create new products.',
     price: 500,
   ),
   WasteCategory(
     title: 'Glass',
     icon: Icons.local_bar,
     description:
-        'Botol kaca dapat didaur ulang tanpa batas tanpa kehilangan kualitas. Daur ulang kaca menghemat energi dan bahan baku, serta mengurangi volume sampah di tempat pembuangan akhir.',
+        'Glass bottles can be endlessly recycled without losing quality. Recycling glass saves energy and raw materials, and reduces landfill waste volume.',
     price: 250,
   ),
   WasteCategory(
     title: 'Metal',
     icon: Icons.iron,
     description:
-        'Logam seperti besi, aluminium, dan tembaga dapat didaur ulang berkali-kali tanpa kehilangan kualitas. Daur ulang logam menghemat energi dan mengurangi kebutuhan penambangan bijih baru.',
+        'Metals like iron, aluminum, and copper can be recycled many times without quality loss. Metal recycling saves energy and reduces the need for new ore mining.',
     price: 1500,
   ),
   WasteCategory(
     title: 'Biological',
     icon: Icons.local_pizza,
     description:
-        'Sampah organik seperti sisa makanan dan daun dapat diolah menjadi kompos yang berguna untuk tanaman. Pengomposan membantu mengurangi sampah dan menciptakan pupuk alami.',
+        'Organic waste such as food scraps and leaves can be composted into useful fertilizer for plants. Composting helps reduce waste and creates natural fertilizer.',
     price: 100,
   ),
   WasteCategory(
     title: 'Trash',
     icon: Icons.masks,
     description:
-        'Sampah umum yang tidak dapat didaur ulang perlu dikelola dengan baik untuk mengurangi dampak lingkungan. Pengurangan sampah melalui reuse dan reduce adalah langkah terbaik.',
+        'General waste that cannot be recycled needs to be properly managed to minimize environmental impact. Waste reduction through reuse and reduce is the best approach.',
     price: 150,
   ),
 ];

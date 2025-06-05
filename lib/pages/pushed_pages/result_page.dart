@@ -102,7 +102,7 @@ class _ResultScreenState extends State<ResultScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Berhasil menjual "$rubbishName" seharga ${price} btc. Saldo baru: ${widget.coinManager.currentCoins.value.toInt()} btc',
+              'Successfully sold "$rubbishName" for ${price} BTC. New balance: ${widget.coinManager.currentCoins.value.toInt()} BTC',
             ),
             backgroundColor: AppColors.primary,
           ),
@@ -231,7 +231,7 @@ class _ResultScreenState extends State<ResultScreen> {
                           child: TextField(
                             controller: _rubbishNameController,
                             decoration: InputDecoration(
-                              hintText: 'Masukkan nama sampah Anda di sini...',
+                              hintText: 'Enter your rubbish name here...',
                               hintStyle: TextStyle(
                                 color: AppColors.dark.withOpacity(0.5),
                                 fontSize: 16.sp,
@@ -256,7 +256,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         Icon(Icons.apps, color: AppColors.primary, size: 24.sp),
                         SizedBox(width: 12.w),
                         Text(
-                          'Kategori : ',
+                          'Category : ',
                           style: TextStyle(
                             color: AppColors.dark,
                             fontSize: 16.sp,

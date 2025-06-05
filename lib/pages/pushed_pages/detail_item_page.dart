@@ -146,7 +146,7 @@ class ItemDetailPage extends StatelessWidget {
                   TextSpan(
                     children: [
                       TextSpan(
-                        text: "Harga : ",
+                        text: "Price : ",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       TextSpan(
@@ -182,7 +182,7 @@ class ItemDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Deskripsi",
+                      "Description",
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: AppColors.dark,

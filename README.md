@@ -45,7 +45,7 @@ To get a local copy up and running, follow these simple steps.
 ### Prerequisites
 
   * Flutter SDK installed on your machine.
-  * A code editor like VS Code or Android Studio.
+  * A code editor like VS Code or Android Studio or just use Vim like me([@lfiathan](https://github.com/lfiathan)).
 
 ### Installation
 

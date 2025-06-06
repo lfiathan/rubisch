@@ -8,7 +8,7 @@ A Flutter-based mobile application that turns trash into treasure. Using a custo
 
 | Homepage                                     | History Page                                     |
 | -------------------------------------------- | ------------------------------------------------ |
-| *(Your Screenshot of the Homepage Here)* | *(Your Screenshot of the History Page Here)* |
+| ![Homepage](Readme-Assets/Homepage.jpeg) | ![History Page](Readme-Assets/Historypage.jpeg) |
 | The homepage displays your total coin balance, provides information on different trash categories, and shows the latest news articles on waste and recycling. | The history page keeps a record of all your previously scanned items for easy reference. |
 
 -----

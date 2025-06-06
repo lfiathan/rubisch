@@ -1,12 +1,4 @@
-Of course\! Based on the information you've provided, here is a complete, professional README file crafted specifically for your "rubisch" project.
-
-Just copy and paste the entire text below into your `README.md` file.
-
------
-
 # rubisch ♻️
-
-*(Optional: Insert your project logo here)*
 
 A Flutter-based mobile application that turns trash into treasure. Using a custom-built Machine Learning model, **rubisch** identifies different types of waste through your camera and rewards you with virtual currency for your recycling efforts.
 

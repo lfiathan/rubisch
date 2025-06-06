@@ -84,9 +84,9 @@ To get a local copy up and running, follow these simple steps.
 
 This project was brought to life by a team of dedicated developers:
 
-  * **Lfiathan:** ML model creation, TensorFlow implementation, camera feature, and CRUD database logic.
-  * **Rifkialaudin:** Trash information logic, history page functionality, and coin management system.
-  * **ivanrhmt77:** UI/UX design, UI slicing from design to code, and News API implementation.
+* **[@lfiathan](https://github.com/lfiathan):** ML model creation, TensorFlow implementation, camera feature, and CRUD database logic.
+* **[@rifkialaudin](https://github.com/rifkialaudin):** Trash information logic, history page functionality, and coin management system.
+* **[@ivanrhmt77](https://github.com/ivanrhmt77):** UI/UX design, UI slicing from design to code, and News API implementation.
 
 -----
 
